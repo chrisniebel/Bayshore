@@ -1,0 +1,93 @@
+﻿@{
+    ViewBag.Title = "Template Parser";
+}
+@using CNiebel.Models;
+@model  HomeViewModel
+<div class="row">
+    <em>To parse a template, add one or more key values.  Then provide a template and click Parse.</em>"
+</div>
+<div class="row">
+    @using (Html.BeginForm("AddKeyValue", "Home", FormMethod.Post, new { @class = "form-inline" }))
+    {
+        <div class="col-md-6">
+            <div class="panel-heading alert-info table-bordered">
+                Add Key Value
+            </div>
+            <div class="panel-body table-bordered">
+                <div class="form-group form-horizontal">
+                    <label class="form-control-static">New Key:</label><input id="NewKey" name="NewKey" type="text" class="form-control" />
+                </div>
+                <div class="form-group form-horizontal">
+                    <label class="form-control-static">New Value:</label>
+                    <input id="NewValue" name="NewValue" type="text" class="form-control" />
+                </div>
+                <br /><br />
+                <div class="form-group">
+                    <button class="btn">Add Key Value</button>
+                </div>
+            </div>
+        </div>
+        <div class="hidden">
+            @for (var index = 0; index < Model.Templates.Count; index++)
+            {
+                @Html.HiddenFor(m => Model.Templates[index].Key)
+                @Html.HiddenFor(m => Model.Templates[index].Value)
+            }
+        </div>
+    }
+</div>
+<br />
+@using (Html.BeginForm("Parse", "Home"))
+{
+    <div class="col-md-6">
+        <table class="table table-bordered table-condensed">
+            <thead class="thead alert-info"><tr><td colspan="2">Key Values</td></tr></thead>
+            @if (Model.Templates.Count == 0)
+            {
+                <tr>
+                    <td colspan="2">
+                        <label class="label">There are no templates, add a key and value and click Add Template to parse text.</label>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                for (var index = 0; index < Model.Templates.Count; index++)
+                {
+                    <tr>
+                        <td>
+                            @Model.Templates[index].Key
+                            @Html.HiddenFor(m => Model.Templates[index].Key)
+                        </td>
+                        <td>
+                            @Model.Templates[index].Value
+                            @Html.HiddenFor(m => Model.Templates[index].Value)
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-10">
+            <span>Template To Parse:</span>&nbsp;@Html.TextBoxFor(m => m.InputText, new { @class = "form-control" })<br />
+            <button class="btn">Parse</button>
+        </div>
+        <br />
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-10">
+            @{
+                var divClass = "";
+                if (string.IsNullOrEmpty(Model.ParsedText))
+                {
+                    divClass = "hidden";
+                }
+
+                <div id="parsedText" class="form-control @divClass alert-success">@Model.ParsedText</div>
+            }
+        </div>
+    </div>
+}
